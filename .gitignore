@@ -1,0 +1,9 @@
+.idea
+.idea/
+.idea*
+
+creds/
+creds/*
+
+__pycache__/
+
