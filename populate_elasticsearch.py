@@ -10,13 +10,13 @@ def printf(*args, **kwargs):
     print(*args, **kwargs)
     sys.stdout.flush()
 
+COLLECTION_NAME = "definitions"
 
 # SETUP ELASTIC SEARCH
 
 ELASTIC_SEARCH_URL = os.getenv("ELASTICSEARCH_URL")
-COLLECTION_NAME = "definitions"
-
 es = Elasticsearch(ELASTIC_SEARCH_URL)
+
 printf(es.cat.count())
 printf("CONNECTED TO ELASTIC")
 
@@ -37,10 +37,10 @@ n_docs = len(docs)
 printf(f"FETCHED {n_docs} DOCS...")
 
 printf("STARTING MIGRATION")
-i = 1
+i = 0
 for doc in docs:
     res = es.index(index=COLLECTION_NAME, id=doc.id, body=doc.to_dict())
     i += 1
-    printf(f"{i}/{n_docs + 1} done")
+    printf(f"{i}/{n_docs} done")
 
 es.indices.refresh(index=COLLECTION_NAME)

@@ -1,10 +1,12 @@
+import os
 from urllib.parse import unquote_plus
 
 from elasticsearch import Elasticsearch
 from fastapi import FastAPI
 
 app = FastAPI()
-es = Elasticsearch()
+ELASTIC_SEARCH_URL = os.getenv("ELASTICSEARCH_URL")
+es = Elasticsearch(ELASTIC_SEARCH_URL)
 
 
 @app.get("/")
@@ -35,12 +37,10 @@ async def get_all_definitions(search_tag_encoded: str):
 
     es_query = {
       "query": {
-        "match": {
-          "title": {
-            "query": search_tag,
-            "fuzziness": "1"
+          "query_string": {
+              "query": f"*{search_tag}*",
+              "fields": ["title", "text"]
           }
-        }
       }
     }
     res = es.search(index="definitions", body=es_query)
