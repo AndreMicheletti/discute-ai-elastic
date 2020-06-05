@@ -22,7 +22,12 @@ async def get_all_definitions():
             "match_all": {}
         }
     }
-    res = es.search(index="definitions", body=es_query)
+    res = es.search(
+        index="definitions",
+        body=es_query,
+        size=3000,
+        sort='likes:desc'
+    )
 
     if "hits" in res.keys() and not res["timed_out"]:
         return res["hits"]["hits"]
@@ -39,7 +44,7 @@ async def get_all_definitions(search_tag_encoded: str):
       "query": {
           "query_string": {
               "query": f"*{search_tag}*",
-              "fields": ["title", "text"]
+              "fields": ["title^2", "tags", "text"]
           }
       }
     }
